@@ -2,7 +2,6 @@
 # Variables
 REGISTRY ?= quay.io/open-cluster-management
 IMAGE_TAG ?= latest
-APP = app-torch
 
 build-app-image:
 	docker build -t ${REGISTRY}/sidecar:${IMAGE_TAG} . -f Dockerfile
