@@ -21,7 +21,7 @@ type Reporter struct {
 	accuracy float64
 }
 
-func NewReporter(ctx context.Context, endpoint string) (*Reporter, error) {
+func NewReporter(ctx context.Context, endpoint string, interval int) (*Reporter, error) {
 	exporter, err := otlpmetricgrpc.New(
 		ctx,
 		otlpmetricgrpc.WithInsecure(),
@@ -32,7 +32,7 @@ func NewReporter(ctx context.Context, endpoint string) (*Reporter, error) {
 	}
 
 	meterProvider := sdkmetric.NewMeterProvider(
-		sdkmetric.WithReader(sdkmetric.NewPeriodicReader(exporter, sdkmetric.WithInterval(60*time.Second))),
+		sdkmetric.WithReader(sdkmetric.NewPeriodicReader(exporter, sdkmetric.WithInterval(time.Duration(interval)*time.Second))),
 	)
 
 	meter := meterProvider.Meter("fl-train-events")

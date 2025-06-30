@@ -14,13 +14,15 @@ import (
 )
 
 var (
-	metricFile string
-	endpoint   string
+	metricFile       string
+	endpoint         string
+	reporterInterval int
 )
 
 func main() {
 	flag.StringVar(&metricFile, "metricfile", "", "Path to the metric file")
 	flag.StringVar(&endpoint, "endpoint", "", "Target endpoint address")
+	flag.IntVar(&reporterInterval, "interval", 60, "Reporter automatic push interval in seconds")
 	flag.Parse()
 
 	if metricFile == "" || endpoint == "" {
@@ -28,8 +30,6 @@ func main() {
 		flag.Usage()
 		os.Exit(1)
 	}
-
-	fmt.Printf("%s, %s\n", metricFile, endpoint)
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -42,7 +42,7 @@ func main() {
 		cancel()
 	}()
 
-	reporter, err := exporter.NewReporter(ctx, endpoint)
+	reporter, err := exporter.NewReporter(ctx, endpoint, reporterInterval)
 	if err != nil {
 		log.Fatalf("Init metrics reporter failed: %v", err)
 	}
