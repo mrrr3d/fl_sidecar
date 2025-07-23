@@ -18,21 +18,19 @@ go run main.go -metricfile <path-to-metric-file> -endpoint <otlp-grpc-endpoint>
 
 ### Metric File Format
 
-The sidecar expects the metric file to contain comma-separated values in the following format:
-
-`epoch,loss,accuracy`
+The sidecar expects the metric file to be in JSON format. The file should contain a single JSON object where keys are the metric names (strings) and values are the metric values (numbers).
 
 **Example:**
 
-```
-1,0.543,0.87
+```json
+{
+  "epoch": 1,
+  "loss": 0.543,
+  "accuracy": 0.87
+}
 ```
 
-  * The first value is an integer representing the epoch count.
-  * The second value is a float representing the loss.
-  * The third value is a float representing the accuracy.
-
-The sidecar watches this file for changes and sends the latest values as metrics to the collector.
+The sidecar watches this file for changes and sends the key-value pairs as metrics to the collector.
 
 ## Run as a Container
 
