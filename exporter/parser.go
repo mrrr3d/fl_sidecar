@@ -30,12 +30,13 @@ func (f *flexibleFloat) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func ParseContetnt(content []byte) map[string]float64 {
+func ParseContetnt(content []byte) (map[string]float64, error) {
 	metrics := make(map[string]flexibleFloat)
 
 	err := json.Unmarshal(content, &metrics)
 	if err != nil {
-		log.Fatalf("JSON unmarshaling failed: %s", err)
+		log.Printf("JSON unmarshaling failed: %s", err)
+		return nil, err
 	}
 
 	result := make(map[string]float64, len(metrics))
@@ -43,5 +44,5 @@ func ParseContetnt(content []byte) map[string]float64 {
 		result[key] = float64(value)
 	}
 
-	return result
+	return result, nil
 }

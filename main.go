@@ -65,7 +65,7 @@ func main() {
 				return
 			}
 
-			go parseAndPushMtrics(reporter, string(content))
+			go parseAndPushMtrics(reporter, content)
 
 		case <-ctx.Done():
 			log.Printf("exiting")
@@ -74,17 +74,14 @@ func main() {
 	}
 }
 
-func parseAndPushMtrics(reporter *exporter.Reporter, content string) {
-	var epoch int64
-	var loss, accuracy float64
-
-	_, err := fmt.Sscanf(content, "%d,%f,%f", &epoch, &loss, &accuracy)
+func parseAndPushMtrics(reporter *exporter.Reporter, content []byte) {
+	metrics, err := exporter.ParseContetnt(content)
 	if err != nil {
-		log.Printf("Parse content failed, content: %q, err: %v", string(content), err)
+		log.Printf("Parse metrics err: %v", err)
 		return
 	}
 
-	reporter.UpdateMetrics(epoch, loss, accuracy)
+	reporter.UpdateMetrics(metrics)
 
 	flushCtx, flushCancel := context.WithTimeout(context.Background(), 10*time.Second)
 
@@ -92,7 +89,9 @@ func parseAndPushMtrics(reporter *exporter.Reporter, content string) {
 	if err != nil {
 		log.Printf("Force flush err: %v", err)
 	} else {
-		log.Printf("Push metrics success, epoch: %d, loss: %f, accuracy: %f", epoch, loss, accuracy)
+		for k, v := range metrics {
+			log.Printf("Metric: %s, value: %f\n", k, v)
+		}
 	}
 
 	flushCancel()
