@@ -44,7 +44,10 @@ func TestParseContent(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			actual := ParseContetnt(tc.input)
+			actual, err := ParseContetnt(tc.input)
+			if err != nil {
+				t.Errorf("unexpected error: %v", err)
+			}
 			if !reflect.DeepEqual(actual, tc.expected) {
 				t.Errorf("expected %v, but got %v", tc.expected, actual)
 			}
