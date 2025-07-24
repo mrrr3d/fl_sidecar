@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
 	"sync"
 	"time"
 
@@ -33,11 +34,16 @@ func NewReporter(ctx context.Context, endpoint string, interval int) (*Reporter,
 		return nil, fmt.Errorf("failed to create OTLP metric exporter: %w", err)
 	}
 
+	podName := os.Getenv("POD_NAME")
+	namespace := os.Getenv("POD_NAMESPACE")
+
 	res, err := resource.Merge(
 		resource.Default(),
 		resource.NewWithAttributes(
 			semconv.SchemaURL,
 			semconv.ServiceNameKey.String("fl_sidecar"),
+			semconv.K8SNamespaceNameKey.String(namespace),
+			semconv.K8SPodNameKey.String(podName),
 		),
 	)
 	if err != nil {
