@@ -20,6 +20,8 @@ go run main.go -metricfile <path-to-metric-file> -endpoint <otlp-grpc-endpoint>
 
 The sidecar expects the metric file to be in JSON format. The file should contain a single JSON object where keys are the metric names (strings) and values are the metric values (numbers).
 
+**NOTE:** When updating the metrics each time, it will automatically add the `timestamp` field to the metrics. But if the `metric.json` file already contains a `timestamp` field, it will overwrite the value with the current timestamp.
+
 **Example:**
 
 ```json
