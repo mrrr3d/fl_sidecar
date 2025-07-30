@@ -74,6 +74,11 @@ func (r *Reporter) UpdateMetrics(newMetrics map[string]float64) {
 
 	r.metrics = newMetrics
 
+	if _, ok := r.metrics["timestamp"]; ok {
+		log.Println("overwrite timestamp")
+	}
+	r.metrics["timestamp"] = float64(time.Now().Unix())
+
 	needsUpdate := false
 	if len(r.metrics) != len(r.gauges) {
 		needsUpdate = true
